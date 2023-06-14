@@ -1,0 +1,10 @@
+---
+inputs:
+    customer:
+        description: 'customer name'
+        required: true
+        type: string
+    cluster-type:
+        description: 'type of cluster to create'
+        required: true
+        type: string

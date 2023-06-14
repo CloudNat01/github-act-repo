@@ -1,0 +1,22 @@
+name: test config file yaml
+
+on: 
+    workflow_dispatch:
+
+
+jobs:
+    print-word: 
+        name: hello
+        runs-on: ubuntu-latest
+        steps:
+          - name: getting inputs
+            id: read-inputs
+            run: | 
+              echo "::set-output name=inputs::$(cat .github/workflowsinputs.yaml)"
+          - name: printing
+            run: |
+              INPUTS=$(echo "${{ steps.read-inputs.output.inputs}}" | yq r -)
+              CUSTOMER=$(echo $INPUTS | yq r - customer)
+
+              echo $CUSTMER
+
