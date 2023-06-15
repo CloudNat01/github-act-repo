@@ -2,21 +2,30 @@ name: test config file yaml
 
 on: 
     workflow_dispatch:
-
+        inputs:
+            customer:
+              description: "name of customer"
+              required: true
+              type: choice
+              options:
+                  - lululemon
+                  - menards
 
 jobs:
-    print-word: 
-        name: hello
-        runs-on: ubuntu-latest
-        steps:
-          - name: getting inputs
-            id: read-inputs
-            run: | 
-              echo "::set-output name=inputs::$(cat .github/workflowsinputs.yaml)"
-          - name: printing
-            run: |
-              INPUTS=$(echo "${{ steps.read-inputs.output.inputs}}" | yq r -)
-              CUSTOMER=$(echo $INPUTS | yq r - customer)
-
-              echo $CUSTMER
-
+    production-deploy:
+          name: lulu-build
+          if: inputs.customer == 'lululemon'
+          runs-on: ubuntu-latest
+          steps:
+            - name: print the word
+              run: |
+                echo ${{ inputs.customer}}
+          
+    reload-deploy:
+          name: menards-build
+          if: inputs.customer == 'menards'
+          runs-on: ubuntu-latest
+          steps:
+            - name: print the word
+              run: |
+                echo ${{ inputs.customer }}
