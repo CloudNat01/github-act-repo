@@ -19,8 +19,8 @@ on:
                 - tfst-bk
 
 env:
-  CLUSTER_NAME: ${{ inputs.cluster_name }}
-  KOPS_STATE_STORE: ${{ inputs.kops_state_store }}
+  cluster_name: ${{ inputs.cluster_name }}
+  kops_state_store: ${{ inputs.kops_state_store }}
               
 
 jobs:
