@@ -17,11 +17,43 @@ on:
               options:
                 - kops-state-bk
                 - tfst-bk
+            zone:
+              description: "zone to create"
+              required: true
+              type: choice
+              options:
+                - us-east-1
+                - us-east-2
+            node_count:
+              description: "node count"
+              required: true
+              type: choice
+              options:
+                - 2
+                - 3
+                - 4
+            node_size:
+              description: "node size"
+              required: true
+              type: choice
+              options:
+                - t2.micro
+                - t3.medium
+            master_node_size:
+              description: "master node size"
+              required: true
+              type: choice
+              options:
+                - t2.micro
+                - t3.medium
 
 env:
   cluster_name: ${{ inputs.cluster_name }}
   kops_state_store: ${{ inputs.kops_state_store }}
-              
+  zone: ${{ inputs.zone}}
+  node_count: ${{ inputs.node_count }}
+  node_size: ${{ inputs.node_size }}
+  master_node_size: ${{ inputs.master_node_size }}
 
 jobs:
   cluster_creation:
@@ -46,4 +78,5 @@ jobs:
         
         - name: creating the cluster
           run: |
-               kops create -f ./manifest.yaml --name=${{ env.cluster_name }} --state=s3://${{ env.kops_state_store }}
+               kops create cluster --name=${{ env.cluster_name }}  --state=${{ env.kops_state_store }}  --zones=${{ env.zone }} --master-zones=${{ env.zone }} --ssh-public-key=${{ secrets.PUB_KEY }} --topology=private --bastion --node-count=${{ env.node_count }} --node-size=${{ env.node_size }} --master-size=${{ env.master_node_size }} --dry-run --dns-zone=${{ env.cluster_name }} -o yaml > ${{ env.cluster_name }}.yaml
+               kops create -f ./${{ env.cluster_name }}.yaml 
