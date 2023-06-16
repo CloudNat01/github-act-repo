@@ -3,29 +3,47 @@ name: test config file yaml
 on: 
     workflow_dispatch:
         inputs:
-            customer:
+            cluster_name:
               description: "name of customer"
               required: true
               type: choice
               options:
-                  - lululemon
-                  - menards
+                - devopslab.cloud
+                - documentation.io
+            kops_state_store:
+              description: "where the state will be stored"
+              required: true
+              type: choice
+              options:
+                - kops-state-bk
+                - tfst-bk
+
+env:
+  CLUSTER_NAME: ${{ inputs.cluster_name }}
+  KOPS_STATE_STORE: ${{ inputs.kops_state_store }}
+              
 
 jobs:
-    production-deploy:
-          name: lulu-build
-          if: inputs.customer == 'lululemon'
-          runs-on: ubuntu-latest
-          steps:
-            - name: print the word
-              run: |
-                echo ${{ inputs.customer}}
-          
-    reload-deploy:
-          name: menards-build
-          if: inputs.customer == 'menards'
-          runs-on: ubuntu-latest
-          steps:
-            - name: print the word
-              run: |
-                echo ${{ inputs.customer }}
+  cluster_creation:
+      name: "cluster creation"
+      runs-on: ubuntu-latest
+      steps:
+        - name: checkout
+          uses: actions/checkout@v3
+
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-2
+
+        - name: setting up kops
+          run: | 
+              curl -Lo kops https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+              chmod +x kops
+              sudo mv kops /usr/local/bin/kops
+        
+        - name: creating the cluster
+          run: |
+               kops create -f ./manifest.yaml
