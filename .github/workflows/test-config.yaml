@@ -46,4 +46,4 @@ jobs:
         
         - name: creating the cluster
           run: |
-               kops create -f ./manifest.yaml --state=s3://${{ env.kops_state_store }}
+               kops create -f ./manifest.yaml --name=${{ env.cluster_name }} --state=s3://${{ env.kops_state_store }}
