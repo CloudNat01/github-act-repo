@@ -17,13 +17,13 @@ on:
               options:
                 - kops-state-bk
                 - tfst-bk
-            zone:
+            zones:
               description: "zone to create"
               required: true
               type: choice
               options:
-                - us-east-1
-                - us-east-2
+                - "us-east-1a,us-east-1b,us-east-1c"
+                - "us-east-2a,us-east-2b,us-east-2c"
             node_count:
               description: "node count"
               required: true
@@ -78,5 +78,21 @@ jobs:
         
         - name: creating the cluster
           run: |
-               kops create cluster --name=${{ env.cluster_name }}  --state=${{ env.kops_state_store }}  --zones=${{ env.zone }} --master-zones=${{ env.zone }} --ssh-public-key=${{ secrets.PUB_KEY }} --topology=private --bastion --node-count=${{ env.node_count }} --node-size=${{ env.node_size }} --master-size=${{ env.master_node_size }} --dry-run --dns-zone=${{ env.cluster_name }} -o yaml > ${{ env.cluster_name }}.yaml
-               kops create -f ./${{ env.cluster_name }}.yaml 
+               export KOPS_STATE_STORE="s3://${{ env.kops_state_store }}"
+               export CONTROL_PLANE_SIZE="${{ env.master_node_size }}"
+               export NODE_SIZE="${{ env.node_size }}"
+               export ZONES="${{ env.zones }}" 
+               export NODE_COUNT="${{ env.node_count }} "
+               kops create cluster ${{ env.cluster_name }} \
+               --node-count $NODE_COUNT \
+               --zones $ZONES \
+               --node-size $NODE_SIZE \
+               --control-plane-size $CONTROL_PLANE_SIZE \
+               --control-plane-zones $ZONES \
+               --dns-zone ${{ env.cluster_name }} \
+               --ssh-public-key ${{ secrets.PUB_KEY }}
+               --networking cilium \
+               --topology private \
+               --bastion="true" \
+               --yes
+            
