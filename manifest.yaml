@@ -1,7 +1,7 @@
 apiVersion: kops.k8s.io/v1alpha2
 kind: Cluster
 metadata:
-  name: ${{ env.cluster_name }}
+  name: ${{ inputs.cluster_name }}
 spec:
   api:
     loadBalancer:
@@ -11,8 +11,8 @@ spec:
     rbac: {}
   channel: stable
   cloudProvider: aws
-  configBase: ${{ env.KOPS_STATE_STORE }}/${{ env.cluster_name }}
-  dnsZone: ${{ env.cluster_name }}
+  configBase: ${{ inputs.KOPS_STATE_STORE }}/${{ inputs.cluster_name }}
+  dnsZone: ${{ inputs.cluster_name }}
   etcdClusters:
   - cpuRequest: 200m
     etcdMembers:
@@ -51,7 +51,7 @@ spec:
   - 0.0.0.0/0
   - ::/0
   kubernetesVersion: 1.26.5
-  masterPublicName: api.${{ env.cluster_name }}
+  masterPublicName: api.${{ inputs.cluster_name }}
   networkCIDR: 172.20.0.0/16
   networking:
     cilium:
@@ -87,7 +87,7 @@ spec:
     zone: us-east-1c
   topology:
     bastion:
-      bastionPublicName: bastion.${{ env.cluster_name }}
+      bastionPublicName: bastion.${{ inputs.cluster_name }}
     dns:
       type: Public
     masters: private
@@ -99,7 +99,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: control-plane-us-east-1a
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
@@ -119,7 +119,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: control-plane-us-east-1b
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
@@ -139,7 +139,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: control-plane-us-east-1c
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
@@ -159,7 +159,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: nodes-us-east-1a
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
@@ -179,7 +179,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: nodes-us-east-1b
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
@@ -199,7 +199,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: nodes-us-east-1c
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
@@ -219,7 +219,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: bastions
 spec:
   image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
@@ -241,7 +241,7 @@ apiVersion: kops.k8s.io/v1alpha2
 kind: SSHCredential
 metadata:
   labels:
-    kops.k8s.io/cluster: ${{ env.cluster_name }}
+    kops.k8s.io/cluster: ${{ inputs.cluster_name }}
   name: admin
 spec:
   publicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCmiI5beB4XLEYGtJJRoNXazhoCCPcQ575opxp3D2/Ew573OaX7GEwlgUuMKbA87NHAZ3o/Q5FI8l9+DsHcXzt6aHOhFdy8tMWiIofjvkBaDqBLW7cp48awU9ArfeKHWQZzdGt4mRFJU6ScuJA6/FtjwXh9nrJUDjvCeudWhkbZF20nx2G2s+b35H+xz7lVMAYsMDmTam/CWbFL1XcUUtKWXfAhSH9c4PdY8Q57e1jwIDYW0vKi9LlQVrvV91YGR4PtnNwgxBtSwvMwcoNp4F3+RRs4efNaLXLa9vjzkyjARjtRaQgEnFkyumZE5C/7FHbbkIbIZIiRNsVzfu4nxEKe7U8Z1S8uEPl2UjLECv39gscdEZWjbHzDR2OoPVCQxPBTesJVuo312w3kJO5BtexlgwEyYvqtdRmu/jPJ5Jze4m/TPOFUw+1QU1MlHcnuRGYY2qZhVgc0GVCwvoWkiQQhHT+rmeH+i0jIshP4g8G9m5oVBfUjbAS5tq98ONLFLGs=
