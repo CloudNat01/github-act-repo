@@ -83,13 +83,14 @@ jobs:
                export NODE_SIZE="${{ env.node_size }}"
                export ZONES="${{ env.zones }}" 
                export NODE_COUNT="${{ env.node_count }} "
-               kops create cluster ${{ env.cluster_name }} \
-               --node-count $NODE_COUNT \
-               --zones $ZONES \
+               kops create cluster --name=${{ env.cluster_name }} \
+               --node-count=$NODE_COUNT \
+               --zones=$ZONES \
                --node-size $NODE_SIZE \
-               --control-plane-size $CONTROL_PLANE_SIZE \
-               --control-plane-zones $ZONES \
-               --ssh-public-key ${{ secrets.PUB_KEY }}
+               --control-plane-size=$CONTROL_PLANE_SIZE \
+               --control-plane-zones=$ZONES \
+               --dns-zone=${{ env.cluster_name }} \
+               --ssh-public-key=${{ secrets.PUB_KEY }}
                --networking cilium \
                --topology private \
                --bastion="true" \
