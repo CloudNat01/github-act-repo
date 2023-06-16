@@ -77,7 +77,9 @@ jobs:
               sudo mv kops /usr/local/bin/kops
         
         - name: delete cluster
-          run: kops delete cluster devopslab.cloud 
+          run: |
+               export KOPS_STATE_STORE="s3://kops-state-bk"
+               kops delete cluster devopslab.cloud --yes
         # - name: creating the cluster
         #   run: |
         #        export KOPS_STATE_STORE="s3://kops-state-bk"
