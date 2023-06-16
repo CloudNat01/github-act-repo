@@ -83,7 +83,7 @@ jobs:
                export NODE_SIZE="${{ env.node_size }}"
                export ZONES="${{ env.zones }}" 
                export NODE_COUNT="${{ env.node_count }} "
-               kops create cluster --name=${{ env.cluster_name }} \
+               kops create cluster ${{ env.cluster_name }} \
                --node-count=$NODE_COUNT \
                --zones=$ZONES \
                --node-size $NODE_SIZE \
