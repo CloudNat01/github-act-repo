@@ -1,51 +1,51 @@
 name: test config file yaml
 
-on: 
-    workflow_dispatch:
-        inputs:
-            cluster_name:
-              description: "name of customer"
-              required: true
-              type: choice
-              options:
-                - devopslab.cloud
-                - documentation.io
-            kops_state_store:
-              description: "where the state will be stored"
-              required: true
-              type: choice
-              options:
-                - kops-state-bk
-                - tfst-bk
-            zones:
-              description: "zone to create"
-              required: true
-              type: choice
-              options:
-                - "us-east-1a,us-east-1b,us-east-1c"
-                - "us-east-2a,us-east-2b,us-east-2c"
-            node_count:
-              description: "node count"
-              required: true
-              type: choice
-              options:
-                - 2
-                - 3
-                - 4
-            node_size:
-              description: "node size"
-              required: true
-              type: choice
-              options:
-                - t2.micro
-                - t3.medium
-            master_node_size:
-              description: "master node size"
-              required: true
-              type: choice
-              options:
-                - t2.micro
-                - t3.medium
+on: push
+    # workflow_dispatch:
+    #     inputs:
+    #         cluster_name:
+    #           description: "name of customer"
+    #           required: true
+    #           type: choice
+    #           options:
+    #             - devopslab.cloud
+    #             - documentation.io
+    #         kops_state_store:
+    #           description: "where the state will be stored"
+    #           required: true
+    #           type: choice
+    #           options:
+    #             - kops-state-bk
+    #             - tfst-bk
+    #         zones:
+    #           description: "zone to create"
+    #           required: true
+    #           type: choice
+    #           options:
+    #             - "us-east-1a,us-east-1b,us-east-1c"
+    #             - "us-east-2a,us-east-2b,us-east-2c"
+    #         node_count:
+    #           description: "node count"
+    #           required: true
+    #           type: choice
+    #           options:
+    #             - 2
+    #             - 3
+    #             - 4
+    #         node_size:
+    #           description: "node size"
+    #           required: true
+    #           type: choice
+    #           options:
+    #             - t2.micro
+    #             - t3.medium
+    #         master_node_size:
+    #           description: "master node size"
+    #           required: true
+    #           type: choice
+    #           options:
+    #             - t2.micro
+    #             - t3.medium
 
 env:
   cluster_name: ${{ inputs.cluster_name }}
@@ -78,19 +78,16 @@ jobs:
         
         - name: creating the cluster
           run: |
-               export KOPS_STATE_STORE="s3://${{ env.kops_state_store }}"
-               export CONTROL_PLANE_SIZE="${{ env.master_node_size }}"
-               export NODE_SIZE="${{ env.node_size }}"
-               export ZONES="${{ env.zones }}" 
-               export NODE_COUNT="${{ env.node_count }} "
-               kops create cluster ${{ env.cluster_name }} \
-               --node-count=$NODE_COUNT \
-               --zones=$ZONES \
+               export KOPS_STATE_STORE="s3://kops-state-bk"
+               export CONTROL_PLANE_SIZE="c5.large"
+               export NODE_SIZE="m5.large"
+               export ZONES="us-east-1a,us-east-1b,us-east-1c"
+               kops create cluster devopslab.cloud \
+               --node-count 3 \
+               --zones $ZONES \
                --node-size $NODE_SIZE \
-               --control-plane-size=$CONTROL_PLANE_SIZE \
-               --control-plane-zones=$ZONES \
-               --dns-zone=${{ env.cluster_name }} \
-               --ssh-public-key=${{ secrets.PUB_KEY }}
+               --control-plane-size $CONTROL_PLANE_SIZE \
+               --control-plane-zones $ZONES \
                --networking cilium \
                --topology private \
                --bastion="true" \
