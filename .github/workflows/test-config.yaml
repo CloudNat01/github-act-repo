@@ -89,7 +89,6 @@ jobs:
                --node-size $NODE_SIZE \
                --control-plane-size $CONTROL_PLANE_SIZE \
                --control-plane-zones $ZONES \
-               --dns-zone ${{ env.cluster_name }} \
                --ssh-public-key ${{ secrets.PUB_KEY }}
                --networking cilium \
                --topology private \
