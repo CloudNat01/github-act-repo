@@ -76,28 +76,28 @@ jobs:
               chmod +x kops
               sudo mv kops /usr/local/bin/kops
         
-        # - name: delete cluster
-        #   run: |
-        #        export KOPS_STATE_STORE="s3://kops-state-bk2"
-        #        kops delete cluster kubeclusterapp.com --yes
-        - name: creating the cluster
+        - name: delete cluster
           run: |
-              export KOPS_STATE_STORE=s3://kops-state-bk2
-              export NAME=kubeclusterapp.com
-              export CONTROL_PLANE_SIZE="c5.large"
-              export NODE_SIZE="m5.large"
-              export ZONES="us-east-1a,us-east-1b,us-east-1c"
-              kops create cluster $NAME \
-              --node-count 3 \
-              --zones $ZONES \
-              --node-size $NODE_SIZE \
-              --control-plane-size $CONTROL_PLANE_SIZE \
-              --control-plane-zones $ZONES \
-              --networking cilium \
-              --topology private \
-              --bastion="true" \
-              --yes 
+               export KOPS_STATE_STORE="s3://kops-state-bk2"
+               kops delete cluster kubeclusterapp.com --yes
+        # - name: creating the cluster
+        #   run: |
+        #       export KOPS_STATE_STORE=s3://kops-state-bk2
+        #       export NAME=kubeclusterapp.com
+        #       export CONTROL_PLANE_SIZE="c5.large"
+        #       export NODE_SIZE="m5.large"
+        #       export ZONES="us-east-1a,us-east-1b,us-east-1c"
+        #       kops create cluster $NAME \
+        #       --node-count 3 \
+        #       --zones $ZONES \
+        #       --node-size $NODE_SIZE \
+        #       --control-plane-size $CONTROL_PLANE_SIZE \
+        #       --control-plane-zones $ZONES \
+        #       --networking cilium \
+        #       --topology private \
+        #       --bastion="true" \
+        #       --yes 
 
-              kops update cluster $NAME --yes
-              kops validate cluster --wait 10m
+        #       kops update cluster $NAME --yes
+        #       kops validate cluster --wait 10m
             
